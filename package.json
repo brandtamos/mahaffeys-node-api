@@ -1,5 +1,5 @@
 {
-  "name": "mahaffreys-node-api",
+  "name": "mahaffeys-node-api",
   "version": "1.0.0",
   "description": "API for Mahaffrey's beer drinker list",
   "main": "index.js",
