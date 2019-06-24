@@ -79,6 +79,61 @@ app.get('/topdrinkers', async (req, res) => {
     });
  });
 
+ app.get('/members/beers/:memberId', async (req, res) => {
+    const memberId = req.params.memberId;
+    //grab data from the cache if it's there
+    //appCache.get(MEMBERS_CACHE_KEY, function(err, value){
+        //if(!err){
+            //if(value == undefined){
+                //fetch from server
+                const formData = 'member_id_num=' + memberId;
+                axios.post('http://www.mahaffeyspub.com/beer/beers_consumed.php', formData)
+                .then(response => {
+                    const data = parseMemberBeers(response.data);
+                    //appCache.set( MEMBERS_CACHE_KEY, data);
+                    res.header('Content-Type', 'application/json');
+                    res.send(JSON.stringify(data, null, 2));
+                })
+                .catch( error => {
+                    console.log(error);
+                    res.send('oopsie');
+                });
+            //}
+            //else{
+                //fetch from the cache
+                //res.send(JSON.stringify(value, null, 2));
+            //}
+            //return value;
+        //}
+    });
+
+    app.get('/members/beers/todrink/:memberId', async (req, res) => {
+        const memberId = req.params.memberId;
+        //grab data from the cache if it's there
+        //appCache.get(MEMBERS_CACHE_KEY, function(err, value){
+            //if(!err){
+                //if(value == undefined){
+                    //fetch from server
+                    const formData = 'member_id_num=' + memberId;
+                    axios.get('http://www.mahaffeyspub.com/beer/beers_to_drink.php?member_id_num=' + memberId)
+                    .then(response => {
+                        const data = parseBeersToDrink(response.data);
+                        //appCache.set( MEMBERS_CACHE_KEY, data);
+                        res.header('Content-Type', 'application/json');
+                        res.send(JSON.stringify(data, null, 2));
+                    })
+                    .catch( error => {
+                        console.log(error);
+                        res.send('oopsie');
+                    });
+                //}
+                //else{
+                    //fetch from the cache
+                    //res.send(JSON.stringify(value, null, 2));
+                //}
+                //return value;
+            //}
+        });
 var server = app.listen(PORT, function () {
 	var host = server.address().address;
 	host = (host === '::' ? 'localhost' : host);
@@ -121,5 +176,73 @@ const parseMembers = html => {
     });
     data.splice(0, 12); //yes 12 is a magic number, get used to it
     data.splice(data.length - 1, 1);
+    return data;
+}
+
+const parseMemberBeers = html => {
+    let data = [];
+    const $ = cheerio.load(html);
+    $('p').contents().each((i, elem) => {
+        if(elem.type == 'text'){
+            let value = elem.data.trim();
+            let beerServeStyle = '';
+            const beerServeStyleCode = value.substring(0, 3);
+            switch (beerServeStyleCode){
+                case '(D)':
+                    beerServeStyle = 'Draft';
+                    break;
+                case '(C)':
+                    beerServeStyle = 'Cask';
+                    break;
+                case '(B)':
+                    beerServeStyle = 'Bottle/Can';
+                    break;
+            }
+
+            //this will help filter out anything that is not a beer list entry
+            if(beerServeStyle != ''){
+                const beerName = value.substring(4);
+                data.push({
+                    beerName: beerName, //filter out the dumb sql escapes
+                    beerServeStyle: beerServeStyle,
+                    beerServeStyleCode: beerServeStyleCode
+                });
+            }
+        }
+    });
+    return data;
+}
+
+const parseBeersToDrink = html => {
+    let data = [];
+    const $ = cheerio.load(html);
+    $('p').contents().each((i, elem) => {
+        if(elem.type == 'text'){
+            let value = elem.data.trim();
+            let beerServeStyle = '';
+            const beerServeStyleCode = value.substring(0, 3);
+            switch (beerServeStyleCode){
+                case '(D)':
+                    beerServeStyle = 'Draft';
+                    break;
+                case '(C)':
+                    beerServeStyle = 'Cask';
+                    break;
+                case '(B)':
+                    beerServeStyle = 'Bottle/Can';
+                    break;
+            }
+
+            //this will help filter out anything that is not a beer list entry
+            if(beerServeStyle != ''){
+                const beerName = value.substring(4);
+                data.push({
+                    beerName: beerName, //filter out the dumb sql escapes
+                    beerServeStyle: beerServeStyle,
+                    beerServeStyleCode: beerServeStyleCode
+                });
+            }
+        }
+    });
     return data;
 }
