@@ -162,19 +162,27 @@ const parseTopDrinkers = html => {
 const parseMembers = html => {
     let data = [];
 
+    //the page is split into two sections and effectively duplicates the data.
+    //we use this flag to know when we've hit the second section (the ordered list of users)
+    //and can begin collecting the data
+    let collectData = false;
     const $ = cheerio.load(html);
     $('body').contents().each((i, elem) => {
         if(elem.type == 'text'){
             let arr = elem.data.split('--');
-            let name = arr[0] + '';
-            let memberId = arr[1] + '';
-            data.push({
-                name: name.replace('\n', ''),
-                memberId:  memberId.replace('\n', '')
-            });
+            let memberId = arr[0].trim() + '';
+            let name = arr[1] + '';
+            if(collectData == false && memberId == '1'){
+                collectData = true;
+            }
+            if(collectData == true){
+                data.push({
+                    name: name.replace('\n', ''),
+                    memberId:  memberId.replace('\n', '')
+                });
+            }
         }
     });
-    data.splice(0, 12); //yes 12 is a magic number, get used to it
     data.splice(data.length - 1, 1);
     return data;
 }
