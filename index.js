@@ -152,10 +152,12 @@ const parseTopDrinkers = html => {
         if(elem.type == 'text'){
             let arr = elem.data.split('..........');
             let name = arr[1] + '';
-            data.push({
-                name: name.replace('\n', ''),
-                beerCount:  arr[0]
-            });
+            if(name != 'undefined'){
+                data.push({
+                    name: name.replace('\n', ''),
+                    beerCount:  arr[0].trim()
+                });
+            }
         }
     });
     return data;
