@@ -1,0 +1,93 @@
+#%RAML 1.0
+---
+title: Mahaffey's API
+baseUri: https://mahaffeys-node-api.herokuapp.com/
+version: 0.1
+
+/members:
+    get:
+        description: |
+            Retrieve all members with memberId and name.
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                            [{
+                                "name": "John Doe",
+                                "memberId": "420"
+                            },
+                            {
+                                "name": "Jane Doe",
+                                "memberId": "69"
+                            }]
+
+/topdrinkers:
+    get:
+        description: |
+            Retrieve members with their total beer counts.
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                            [{
+                                "name": "John Doe",
+                                "beerCount": "9999"
+                            },
+                            {
+                                "name": "Jane Doe",
+                                "beerCount": "9998"
+                            }]
+
+/members/beers:
+    /{memberId}:
+        get:
+            description: |
+                Retrieve all beers drunk by a given memberId
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                                [{
+                                    "beerName": "A Very Good Beer",
+                                    "beerServeStyle": "Draft",
+                                    "beerServeStyleCode": "(D)"
+                                },
+                                {
+                                    "beerName": "A Very Good Beer but in a Cask",
+                                    "beerServeStyle": "Cask",
+                                    "beerServeStyleCode": "(C)"
+                                },
+                                {
+                                    "beerName": "A Very Good Beer but in a Bottle or Can",
+                                    "beerServeStyle": "Bottle/Can",
+                                    "beerServeStyleCode": "(B)"
+                                }]
+
+/members/beers/todrink:
+    /{memberId}:
+        get:
+            description: |
+                Retrieve all beers currently available but not yet drunk by a given memberId
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                                [{
+                                    "beerName": "A Very Good Beer",
+                                    "beerServeStyle": "Draft",
+                                    "beerServeStyleCode": "(D)"
+                                },
+                                {
+                                    "beerName": "A Very Good Beer but in a Cask",
+                                    "beerServeStyle": "Cask",
+                                    "beerServeStyleCode": "(C)"
+                                },
+                                {
+                                    "beerName": "A Very Good Beer but in a Bottle or Can",
+                                    "beerServeStyle": "Bottle/Can",
+                                    "beerServeStyleCode": "(B)"
+                                }]
