@@ -25,7 +25,7 @@ app.get('/', function (req, res) {
     //res.send('cheers!');
     res.redirect('/docs');
 });
-app.use(express.static('public'))
+app.use(express.static('public'));
 
 app.get('/topdrinkers', async (req, res) => {
     //grab data from the cache if it's there
