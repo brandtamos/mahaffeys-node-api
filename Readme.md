@@ -1,5 +1,10 @@
-to pull down dependencies: npm install
-to run: npm start
+## Prerequisites
+Node and NPM
+
+## To run the app:
+First down dependencies with: `npm install`
+
+then, run with: `npm start`
 
 to generate documentation:
 cd into public/docs directory
